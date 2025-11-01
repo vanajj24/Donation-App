@@ -49,6 +49,8 @@ const DashboardStyles = () => (
   border: 2px solid #2e86de;
   border-radius: 15px;
   margin-bottom: 25px;
+  position: relative; /* <<< FIX: Added position */
+  z-index: 20;        /* <<< FIX: Added z-index */
 }
 
 .dashboard-header h1 {
@@ -117,6 +119,8 @@ const DashboardStyles = () => (
   padding: 20px;
   text-align: center;
   margin-bottom: 25px;
+  position: relative; /* Added to create stacking context */
+  z-index: 10;        /* Lower z-index than header */
 }
 
 .filters h3 {
@@ -217,6 +221,8 @@ const DashboardStyles = () => (
   margin: 0 auto 30px auto;
   padding: 25px; /* Added padding */
   border: 2px solid #2e86de; /* Added border */
+  position: relative; /* Added to create stacking context */
+  z-index: 5;         /* Lower z-index than header */
 }
 
 .donation-form h3 {
@@ -288,6 +294,8 @@ const DashboardStyles = () => (
   padding: 25px;
   margin-bottom: 30px;
   overflow-x: auto; /* Keeps table responsive */
+  position: relative; /* Added to create stacking context */
+  z-index: 1;         /* Lower z-index than header */
 }
 
 .details-section h3 {
