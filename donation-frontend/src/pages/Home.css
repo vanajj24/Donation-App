@@ -1,0 +1,110 @@
+/* Home.css */
+
+.home-container {
+  font-family: "Poppins", sans-serif;
+  background-color: #f8f9fb;
+  color: #333;
+  text-align: center;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Hero Section */
+.hero-section {
+  padding: 80px 20px 40px;
+  background: linear-gradient(90deg, #dfe9f3, #ffffff);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+}
+
+.hero-text h1 {
+  font-size: 38px;
+  color: #2e86de;
+  margin-bottom: 20px;
+}
+
+.hero-text p {
+  font-size: 18px;
+  max-width: 650px;
+  line-height: 1.6;
+  margin-bottom: 25px;
+}
+
+.donate-btn {
+  background-color: #2e86de;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 25px;
+  font-weight: bold;
+  cursor: pointer;
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+.donate-btn:hover {
+  background-color: #1e5fa4;
+}
+
+/* Footer Donation Section */
+.footer-section {
+  background-color: #2e86de;
+  color: white;
+  padding: 40px 20px;
+  margin-top: 20px;
+  border-top-left-radius: 40px;
+  border-top-right-radius: 40px;
+}
+
+.footer-section h2 {
+  margin-bottom: 30px;
+  font-size: 26px;
+}
+
+.footer-buttons {
+  display: flex;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 15px;
+  margin-bottom: 25px;
+}
+
+.donation-btn {
+  background-color: white;
+  color: #2e86de;
+  border: none;
+  border-radius: 10px;
+  padding: 12px 25px;
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  box-shadow: 0 3px 8px rgba(0, 0, 0, 0.2);
+}
+
+.donation-btn:hover {
+  background-color: #1e5fa4;
+  color: white;
+  transform: translateY(-4px);
+}
+
+/* Footer Text */
+.footer-text {
+  font-size: 15px;
+  opacity: 0.9;
+  margin-top: 60px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .hero-text h1 {
+    font-size: 32px;
+  }
+  .donation-btn {
+    width: 80%;
+  }
+}
