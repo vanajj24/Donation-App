@@ -14,10 +14,16 @@ const FaPlusCircle = () => <span>&#10133;</span>; // Plus emoji
 // --- API Endpoint ---
 const API = "https://donation-app-r9dp.onrender.com/api";
 
-// --- Embedded CSS Styles (Cleaned) ---
+// --- Embedded CSS Styles (Refactored) ---
 const DashboardStyles = () => (
   <style>
     {`
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap');
+
+* {
+  box-sizing: border-box;
+}
+
 .dashboard-page {
   min-height: 100vh;
   background: linear-gradient(135deg, #dfe9f3, #ffffff);
@@ -49,6 +55,7 @@ const DashboardStyles = () => (
   color: #2e86de;
   font-size: 26px;
   font-weight: 700;
+  margin: 0;
 }
 
 /* PROFILE SECTION */
@@ -62,18 +69,19 @@ const DashboardStyles = () => (
 .profile-icon {
   color: #2e86de;
   cursor: pointer;
+  width: 35px; /* Explicit size */
+  height: 35px; /* Explicit size */
 }
 
 .profile-side {
   position: absolute;
-  right: 45px;
-  top: 50%;
-  transform: translateY(-50%);
+  right: 0;
+  top: calc(100% + 10px); /* Position below the icon */
   background: rgba(255, 255, 255, 0.95);
   border: 2px solid #2e86de;
   border-radius: 10px;
   padding: 15px;
-  width: 180px;
+  width: 200px;
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
   z-index: 200;
   pointer-events: auto;
@@ -83,6 +91,7 @@ const DashboardStyles = () => (
   margin: 8px 0;
   color: #333;
   font-size: 16px;
+  word-wrap: break-word; /* Ensure long names don't break layout */
 }
 
 .profile-side button {
@@ -95,6 +104,7 @@ const DashboardStyles = () => (
   width: 100%;
   margin-top: 10px;
   font-weight: 600;
+  font-family: "Poppins", sans-serif;
   transition: 0.3s;
 }
 
@@ -111,12 +121,14 @@ const DashboardStyles = () => (
 
 .filters h3 {
   color: #2e86de;
-  margin-bottom: 10px;
+  margin-bottom: 15px;
+  margin-top: 0;
 }
 
 .filter-buttons {
   display: flex;
   justify-content: center;
+  flex-wrap: wrap; /* Added for responsiveness */
   gap: 10px;
 }
 
@@ -128,6 +140,7 @@ const DashboardStyles = () => (
   border-radius: 10px;
   cursor: pointer;
   font-weight: 600;
+  font-family: "Poppins", sans-serif;
   transition: 0.3s;
 }
 
@@ -155,13 +168,14 @@ const DashboardStyles = () => (
   justify-content: center;
   cursor: pointer;
   border: 2px solid transparent;
-  transition: 0.3s;
+  transition: all 0.3s ease;
 }
 
 .donation-type-card.active-type,
 .donation-type-card:hover {
-  border: 2px solid #2e86de;
+  border-color: #2e86de;
   transform: scale(1.05);
+  box-shadow: 0 4px 15px rgba(46, 134, 222, 0.2);
 }
 
 .donation-type-card p {
@@ -180,22 +194,36 @@ const DashboardStyles = () => (
   background-color: #27ae60;
   color: white;
   border: none;
-  padding: 10px 15px;
+  padding: 12px 20px; /* Made button bigger */
   border-radius: 10px;
   cursor: pointer;
   font-size: 16px;
   font-weight: 600;
+  font-family: "Poppins", sans-serif;
   transition: 0.3s;
+  display: inline-flex; /* To align icon and text */
+  align-items: center;
+  gap: 8px; /* Space between icon and text */
 }
 
 .add-btn:hover {
   background-color: #1e8449;
+  transform: translateY(-2px);
 }
 
 /* ADD DONATION FORM */
 .donation-form {
-  max-width: 450px;
+  max-width: 500px;
   margin: 0 auto 30px auto;
+  padding: 25px; /* Added padding */
+  border: 2px solid #2e86de; /* Added border */
+}
+
+.donation-form h3 {
+  text-align: center;
+  color: #2e86de;
+  margin-top: 0;
+  margin-bottom: 20px;
 }
 
 /* Re-using form-group from Login page styles if available, */
@@ -208,29 +236,44 @@ const DashboardStyles = () => (
   display: block;
   margin-bottom: 5px;
   font-weight: 600;
+  color: #333;
 }
 
 .donation-form .form-group input,
 .donation-form .form-group select,
 .donation-form .form-group textarea {
   width: 100%;
-  padding: 8px 10px;
+  padding: 10px 12px; /* Increased padding */
   border-radius: 8px;
   border: 1px solid #ccc;
   font-family: "Poppins", sans-serif;
+  font-size: 15px;
+  transition: all 0.3s ease;
 }
 
+.donation-form .form-group input:focus,
+.donation-form .form-group select:focus,
+.donation-form .form-group textarea:focus {
+  border-color: #2e86de;
+  box-shadow: 0 0 5px rgba(46, 134, 222, 0.3);
+  outline: none;
+}
+
+
 .donation-form .form-group textarea {
-  resize: none;
+  resize: vertical;
+  min-height: 80px;
 }
 
 .submit-btn {
   width: 100%;
-  padding: 10px;
+  padding: 12px; /* Increased padding */
   border-radius: 8px;
   background-color: #2e86de;
   color: white;
   font-weight: 600;
+  font-size: 16px;
+  font-family: "Poppins", sans-serif;
   border: none;
   cursor: pointer;
   transition: 0.3s;
@@ -244,31 +287,51 @@ const DashboardStyles = () => (
 .details-section {
   padding: 25px;
   margin-bottom: 30px;
-  overflow-x: auto;
+  overflow-x: auto; /* Keeps table responsive */
 }
 
 .details-section h3 {
   text-align: center;
   color: #2e86de;
-  margin-bottom: 15px;
+  margin-bottom: 20px;
 }
 
 .details-section table {
   width: 100%;
   border-collapse: collapse;
   font-size: 14px;
+  background-color: #ffffff; /* Added for contrast */
 }
 
 .details-section th,
 .details-section td {
   border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
+  padding: 12px 10px; /* Increased padding */
+  text-align: left;
+  min-width: 120px; /* Added for better spacing */
 }
 
 .details-section th {
   background-color: #2e86de;
   color: white;
+  font-weight: 600;
+  text-align: center;
+}
+
+.details-section td {
+  color: #333;
+}
+
+.details-section tbody tr {
+  transition: background-color 0.2s;
+}
+
+.details-section tbody tr:nth-child(even) {
+  background-color: #f8f8f8;
+}
+
+.details-section tbody tr:hover {
+  background-color: #eaf5ff; /* Light blue hover */
 }
     `}
   </style>
@@ -331,7 +394,7 @@ function Dashboard() {
       } catch (err) {
         console.error("Error fetching data:", err);
         // If token is invalid or expired, log the user out
-        if (err.response && err.response.status === 401) {
+        if (err.response && (err.response.status === 401 || err.response.status === 403)) {
           handleLogout();
         }
       }
@@ -402,7 +465,8 @@ function Dashboard() {
         contact: "",
       });
       setShowAddForm(false);
-    } catch (err) {
+    } catch (err)
+ {
       console.error("Error adding donation:", err);
       alert(err.response?.data?.message || "Failed to add donation.");
     }
@@ -416,11 +480,13 @@ function Dashboard() {
         <header className="dashboard-header glass">
           <h1>Donation Dashboard</h1>
           <div className="profile-section" ref={profileRef}>
-            <FaUserCircle
-              size={35}
+            <span // Changed from FaUserCircle to a span for better sizing control
               className="profile-icon"
               onClick={() => setShowMenu(!showMenu)}
-            />
+              style={{ fontSize: '35px', cursor: 'pointer', userSelect: 'none' }}
+            >
+              &#128100;
+            </span>
             {showMenu && (
               <div className="profile-side glass">
                 <p>
@@ -459,7 +525,7 @@ function Dashboard() {
               }`}
               onClick={() => setSelectedType(type)}
             >
-              {donationIcons[type]}
+              <span style={{fontSize: '32px'}}>{donationIcons[type]}</span>
               <p>{type}</p>
             </div>
           ))}
@@ -613,13 +679,14 @@ function Dashboard() {
                 {filteredDonations
                   .filter((d) => d.type === selectedType)
                   .map((d, i) => (
-                    <tr key={i}>
+                    <tr key={d._id || i}> {/* Use a unique key like _id if available */}
                       <td>{d.type}</td>
                       <td>{d.name}</td>
                       <td>{d.description}</td>
                       <td>{d.price}</td>
                       <td>{d.quantity}</td>
-                      <td>{d.date}</td>
+                      {/* Format date for readability */}
+                      <td>{new Date(d.date).toLocaleDateString()}</td>
                       <td>{d.location}</td>
                       <td>{d.contact}</td>
                     </tr>
