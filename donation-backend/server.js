@@ -11,10 +11,27 @@ app.use(express.json());
 
 // ====== CORS FIX ======
 // This tells your backend to allow requests
-// ONLY from your frontend's live URL.
+// from your live frontend AND your local dev server.
+
+const allowedOrigins = [
+  "https://donation-app-2.onrender.com",
+  "http://localhost:3000"
+];
+
+// THIS IS THE OBJECT YOU WERE MISSING
 const corsOptions = {
-  origin: "https://donation-app-2.onrender.com",
+  origin: function (origin, callback) {
+    // Check if the incoming origin is in our whitelist
+    if (allowedOrigins.indexOf(origin) !== -1 || !origin) {
+      // Allow requests with no origin (like Postman or mobile apps)
+      // or if origin is in the whitelist
+      callback(null, true);
+    } else {
+      callback(new Error("Not allowed by CORS"));
+    }
+  },
 };
+
 app.use(cors(corsOptions));
 // ======================
 
@@ -204,6 +221,7 @@ app.get("/", (req, res) => {
   res.send("Donation Backend Running Successfully 🚀");
 });
 
+// --- FIXING PORT TYPO ---
 const PORT = process.env.PORT || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
 

@@ -1,22 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios"; // 1. Import axios
-/*
-import {
-  FaUserCircle,
-  FaUtensils,
-  FaBook,
-  FaMoneyBillWave,
-  FaTshirt,
-  FaClinicMedical,
-  FaGraduationCap,
-  FaPlusCircle,
-} from "react-icons/fa";
-*/
-// import "./Dashboard.css"; // This import is no longer needed
 
-// --- Icon Placeholders ---
-// Added as a fallback to resolve compilation errors
 const FaUserCircle = () => <span>&#128100;</span>; // User emoji
 const FaUtensils = () => <span>&#127869;</span>; // Fork and Knife emoji
 const FaBook = () => <span>&#128218;</span>; // Book emoji
@@ -29,263 +14,263 @@ const FaPlusCircle = () => <span>&#10133;</span>; // Plus emoji
 // --- API Endpoint ---
 const API = "https://donation-app-r9dp.onrender.com/api";
 
-// --- Embedded CSS Styles ---
+// --- Embedded CSS Styles (Cleaned) ---
 const DashboardStyles = () => (
   <style>
     {`
 .dashboard-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #dfe9f3, #ffffff);
-  font-family: "Poppins", sans-serif;
-  padding: 30px;
+  min-height: 100vh;
+  background: linear-gradient(135deg, #dfe9f3, #ffffff);
+  font-family: "Poppins", sans-serif;
+  padding: 30px;
 }
 
 /* GLASS EFFECT */
 .glass {
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(10px);
-  border: 2px solid rgba(255, 255, 255, 0.6);
-  border-radius: 15px;
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(10px);
+  border: 2px solid rgba(255, 255, 255, 0.6);
+  border-radius: 15px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
 }
 
 /* HEADER */
 .dashboard-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  padding: 15px 30px;
-  border: 2px solid #2e86de;
-  border-radius: 15px;
-  margin-bottom: 25px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 15px 30px;
+  border: 2px solid #2e86de;
+  border-radius: 15px;
+  margin-bottom: 25px;
 }
 
 .dashboard-header h1 {
-  color: #2e86de;
-  font-size: 26px;
-  font-weight: 700;
+  color: #2e86de;
+  font-size: 26px;
+  font-weight: 700;
 }
 
 /* PROFILE SECTION */
 .profile-section {
-  position: relative;
-  display: flex;
-  align-items: center;
-  z-index: 100;
+  position: relative;
+  display: flex;
+  align-items: center;
+  z-index: 100;
 }
 
 .profile-icon {
-  color: #2e86de;
-  cursor: pointer;
+  color: #2e86de;
+  cursor: pointer;
 }
 
 .profile-side {
-  position: absolute;
-  right: 45px;
-  top: 50%;
-  transform: translateY(-50%);
-  background: rgba(255, 255, 255, 0.95);
-  border: 2px solid #2e86de;
-  border-radius: 10px;
-  padding: 15px;
-  width: 180px;
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
-  z-index: 200;
-  pointer-events: auto;
+  position: absolute;
+  right: 45px;
+  top: 50%;
+  transform: translateY(-50%);
+  background: rgba(255, 255, 255, 0.95);
+  border: 2px solid #2e86de;
+  border-radius: 10px;
+  padding: 15px;
+  width: 180px;
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.25);
+  z-index: 200;
+  pointer-events: auto;
 }
 
 .profile-side p {
-  margin: 8px 0;
-  color: #333;
-  font-size: 16px;
+  margin: 8px 0;
+  color: #333;
+  font-size: 16px;
 }
 
 .profile-side button {
-  background-color: #e74c3c;
-  color: white;
-  border: none;
-  padding: 8px 12px;
-  border-radius: 6px;
-  cursor: pointer;
-  width: 100%;
-  margin-top: 10px;
-  font-weight: 600;
-  transition: 0.3s;
+  background-color: #e74c3c;
+  color: white;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  width: 100%;
+  margin-top: 10px;
+  font-weight: 600;
+  transition: 0.3s;
 }
 
 .profile-side button:hover {
-  background-color: #c0392b;
+  background-color: #c0392b;
 }
 
 /* FILTERS */
 .filters {
-  padding: 20px;
-  text-align: center;
-  margin-bottom: 25px;
+  padding: 20px;
+  text-align: center;
+  margin-bottom: 25px;
 }
 
 .filters h3 {
-  color: #2e86de;
-  margin-bottom: 10px;
+  color: #2e86de;
+  margin-bottom: 10px;
 }
 
 .filter-buttons {
-  display: flex;
-  justify-content: center;
-  gap: 10px;
+  display: flex;
+  justify-content: center;
+  gap: 10px;
 }
 
 .filter-btn {
-  background: white;
-  border: 2px solid #2e86de;
-  color: #2e86de;
-  padding: 8px 15px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-weight: 600;
-  transition: 0.3s;
+  background: white;
+  border: 2px solid #2e86de;
+  color: #2e86de;
+  padding: 8px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: 0.3s;
 }
 
 .filter-btn.active,
 .filter-btn:hover {
-  background-color: #2e86de;
-  color: white;
+  background-color: #2e86de;
+  color: white;
 }
 
 /* DONATION TYPES */
 .donation-types {
-  display: flex;
-  flex-wrap: wrap;
-  justify-content: center;
-  gap: 20px;
-  margin-bottom: 30px;
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 20px;
+  margin-bottom: 30px;
 }
 
 .donation-type-card {
-  width: 120px;
-  height: 120px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  border: 2px solid transparent;
-  transition: 0.3s;
+  width: 120px;
+  height: 120px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  border: 2px solid transparent;
+  transition: 0.3s;
 }
 
 .donation-type-card.active-type,
 .donation-type-card:hover {
-  border: 2px solid #2e86de;
-  transform: scale(1.05);
+  border: 2px solid #2e86de;
+  transform: scale(1.05);
 }
 
 .donation-type-card p {
-  margin-top: 10px;
-  font-weight: 600;
-  color: #333;
+  margin-top: 10px;
+  font-weight: 600;
+  color: #333;
 }
 
 /* ADD DONATION BUTTON */
 .add-donation {
-  text-align: center;
-  margin-bottom: 25px;
+  text-align: center;
+  margin-bottom: 25px;
 }
 
 .add-btn {
-  background-color: #27ae60;
-  color: white;
-  border: none;
-  padding: 10px 15px;
-  border-radius: 10px;
-  cursor: pointer;
-  font-size: 16px;
-  font-weight: 600;
-  transition: 0.3s;
+  background-color: #27ae60;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 10px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: 600;
+  transition: 0.3s;
 }
 
 .add-btn:hover {
-  background-color: #1e8449;
+  background-color: #1e8449;
 }
 
 /* ADD DONATION FORM */
 .donation-form {
-  max-width: 450px;
-  margin: 0 auto 30px auto;
+  max-width: 450px;
+  margin: 0 auto 30px auto;
 }
 
 /* Re-using form-group from Login page styles if available, */
 /* but defining here to be safe */
 .donation-form .form-group {
-  margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
 .donation-form .form-group label {
-  display: block;
-  margin-bottom: 5px;
-  font-weight: 600;
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 600;
 }
 
 .donation-form .form-group input,
 .donation-form .form-group select,
 .donation-form .form-group textarea {
-  width: 100%;
-  padding: 8px 10px;
-  border-radius: 8px;
-  border: 1px solid #ccc;
-  font-family: "Poppins", sans-serif;
+  width: 100%;
+  padding: 8px 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  font-family: "Poppins", sans-serif;
 }
 
 .donation-form .form-group textarea {
-  resize: none;
+  resize: none;
 }
 
 .submit-btn {
-  width: 100%;
-  padding: 10px;
-  border-radius: 8px;
-  background-color: #2e86de;
-  color: white;
-  font-weight: 600;
-  border: none;
-  cursor: pointer;
-  transition: 0.3s;
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  background-color: #2e86de;
+  color: white;
+  font-weight: 600;
+  border: none;
+  cursor: pointer;
+  transition: 0.3s;
 }
 
 .submit-btn:hover {
-  background-color: #1b4f72;
+  background-color: #1b4f72;
 }
 
 /* DETAILS TABLE */
 .details-section {
-  padding: 25px;
-  margin-bottom: 30px;
-  overflow-x: auto;
+  padding: 25px;
+  margin-bottom: 30px;
+  overflow-x: auto;
 }
 
 .details-section h3 {
-  text-align: center;
-  color: #2e86de;
-  margin-bottom: 15px;
+  text-align: center;
+  color: #2e86de;
+  margin-bottom: 15px;
 }
 
 .details-section table {
-  width: 100%;
-  border-collapse: collapse;
-  font-size: 14px;
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 14px;
 }
 
 .details-section th,
 .details-section td {
-  border: 1px solid #ddd;
-  padding: 8px;
-  text-align: center;
+  border: 1px solid #ddd;
+  padding: 8px;
+  text-align: center;
 }
 
 .details-section th {
-  background-color: #2e86de;
-  color: white;
+  background-color: #2e86de;
+  color: white;
 }
-    `}
+    `}
   </style>
 );
 
