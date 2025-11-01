@@ -285,7 +285,7 @@ const DashboardStyles = () => (
   background-color: #2e86de;
   color: white;
 }
-    `}
+    `}
   </style>
 );
 
