@@ -8,14 +8,19 @@ import jwt from "jsonwebtoken";
 dotenv.config();
 const app = express();
 app.use(express.json());
-app.use(cors());
+
+// ====== CORS FIX ======
+// This tells your backend to allow requests
+// ONLY from your frontend's live URL.
+const corsOptions = {
+  origin: "https://donation-app-2.onrender.com",
+};
+app.use(cors(corsOptions));
+// ======================
 
 // ====== MongoDB Connection ======
 mongoose
-  .connect(process.env.MONGO_URI, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(process.env.MONGO_URI) // Removed deprecated options
   .then(() => console.log("✅ MongoDB Connected"))
   .catch((err) => console.log("❌ MongoDB Error:", err));
 
@@ -27,13 +32,30 @@ const userSchema = new mongoose.Schema({
 });
 const User = mongoose.model("User", userSchema);
 
+// ====== DONATION MODEL ======
+// This new schema is required for your dashboard
+const donationSchema = new mongoose.Schema({
+  userId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
+  type: { type: String, required: true },
+  name: { type: String, required: true },
+  description: { type: String, required: true },
+  price: { type: String, required: true }, // Using String as per your frontend state
+  quantity: { type: String, required: true }, // Using String as per your frontend state
+  date: { type: String, required: true },
+  location: { type: String, required: true },
+  contact: { type: String, required: true },
+});
+const Donation = mongoose.model("Donation", donationSchema);
+
 // ====== AUTH MIDDLEWARE (JWT Validation) ======
 const authMiddleware = (req, res, next) => {
   try {
     // 1. Check for token in the authorization header
     const authHeader = req.headers.authorization;
     if (!authHeader || !authHeader.startsWith("Bearer ")) {
-      return res.status(401).json({ message: "Authentication failed: No token provided." });
+      return res
+        .status(401)
+        .json({ message: "Authentication failed: No token provided." });
     }
 
     // 2. Extract the token
@@ -44,29 +66,33 @@ const authMiddleware = (req, res, next) => {
 
     // 4. Attach user ID to the request object
     req.user = { id: decodedToken.id };
-    
+
     // 5. Pass to the next middleware/route handler
     next();
-
   } catch (error) {
     console.error("Auth Middleware Error:", error.message);
     if (error.name === "JsonWebTokenError") {
-      return res.status(401).json({ message: "Authentication failed: Invalid token." });
+      return res
+        .status(401)
+        .json({ message: "Authentication failed: Invalid token." });
     }
     if (error.name === "TokenExpiredError") {
-      return res.status(401).json({ message: "Authentication failed: Token expired." });
+      return res
+        .status(401)
+        .json({ message: "Authentication failed: Token expired." });
     }
     res.status(500).json({ error: "Server error during authentication." });
   }
 };
-
 
 // ====== SIGNUP ======
 app.post("/api/signup", async (req, res) => {
   try {
     const { name, email, password } = req.body;
     if (!name || !email || !password) {
-      return res.status(400).json({ message: "Please provide name, email, and password." });
+      return res
+        .status(400)
+        .json({ message: "Please provide name, email, and password." });
     }
 
     const existingUser = await User.findOne({ email });
@@ -83,11 +109,10 @@ app.post("/api/signup", async (req, res) => {
     });
 
     // --- Return token and user info (matching frontend expectation) ---
-    res.status(201).json({ 
-      token, 
-      user: { id: newUser._id, name: newUser.name, email: newUser.email } 
+    res.status(201).json({
+      token,
+      user: { id: newUser._id, name: newUser.name, email: newUser.email },
     });
-
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -110,7 +135,10 @@ app.post("/api/login", async (req, res) => {
       expiresIn: "1d",
     });
 
-    res.json({ token, user: { id: user._id, name: user.name, email: user.email } });
+    res.json({
+      token,
+      user: { id: user._id, name: user.name, email: user.email },
+    });
   } catch (error) {
     console.error(error);
     res.status(500).json({ error: "Server error" });
@@ -133,8 +161,8 @@ app.get("/api/dashboard", authMiddleware, async (req, res) => {
       userData: {
         name: user.name,
         email: user.email,
-        joined: user._id.getTimestamp() // Example of protected info
-      }
+        joined: user._id.getTimestamp(), // Example of protected info
+      },
     });
   } catch (error) {
     console.error(error);
@@ -142,11 +170,40 @@ app.get("/api/dashboard", authMiddleware, async (req, res) => {
   }
 });
 
+// ====== (NEW) GET ALL DONATIONS FOR USER ======
+app.get("/api/donations", authMiddleware, async (req, res) => {
+  try {
+    // Find all donations that belong to the logged-in user
+    const donations = await Donation.find({ userId: req.user.id });
+    res.json(donations);
+  } catch (error) {
+    console.error("Error fetching donations:", error);
+    res.status(500).json({ error: "Server error fetching donations" });
+  }
+});
+
+// ====== (NEW) ADD A NEW DONATION FOR USER ======
+app.post("/api/donations", authMiddleware, async (req, res) => {
+  try {
+    // Create a new donation, linking it to the user
+    const newDonation = new Donation({
+      ...req.body,
+      userId: req.user.id, // Set the userId from the authenticated user
+    });
+
+    await newDonation.save();
+    res.status(201).json(newDonation); // Send the newly created donation back
+  } catch (error) {
+    console.error("Error adding donation:", error);
+    res.status(500).json({ error: "Server error adding donation" });
+  }
+});
 
 // ====== TEST ROUTE ======
 app.get("/", (req, res) => {
   res.send("Donation Backend Running Successfully 🚀");
 });
 
-const PORT = process.env.PORT || 5000;
+const PORT = process.T || 5000;
 app.listen(PORT, () => console.log(`✅ Server running on port ${PORT}`));
+
